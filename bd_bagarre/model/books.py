@@ -67,9 +67,11 @@ class Author(bd_bagarre.database.Base):
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     name = sqlalchemy.Column(sqlalchemy.String)
+    sorting_name = sqlalchemy.Column(sqlalchemy.String)
 
     books = relationship(
         'Book',
         backref=backref('books',
                         uselist=True,
                         cascade='delete,all'))
+

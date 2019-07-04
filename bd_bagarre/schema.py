@@ -21,5 +21,8 @@ class Query(graphene.ObjectType):
     book = graphene.relay.Node.Field(Book)
     all_books = graphene_sqlalchemy.SQLAlchemyConnectionField(Book)
 
+    author = graphene.relay.Node.Field(Author)
+    all_authors = graphene_sqlalchemy.SQLAlchemyConnectionField(Author)
+
 
 schema = graphene.Schema(query=Query, types=[Book])
