@@ -12,7 +12,7 @@ class Book(graphene_sqlalchemy.SQLAlchemyObjectType):
 
 class Author(graphene_sqlalchemy.SQLAlchemyObjectType):
     class Meta:
-        model = bd_bagarre.model.books.Author
+        model = bd_bagarre.model.authors.Author
         interfaces = (graphene.relay.Node,)
 
 
