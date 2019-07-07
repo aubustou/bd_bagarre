@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+        <dc:identifier opf:scheme="calibre" id="calibre_id">12745</dc:identifier>
+        <dc:identifier opf:scheme="uuid" id="uuid_id">58607c66-b3f4-4615-b70e-ea79e454ffd4</dc:identifier>
+        <dc:title>High Performance Spark: Best Practices for Scaling and Optimizing Apache Spark</dc:title>
+        <dc:creator opf:file-as="Karau, Holden &amp; Warren, Rachel" opf:role="aut">Holden Karau</dc:creator>
+        <dc:creator opf:file-as="Karau, Holden &amp; Warren, Rachel" opf:role="aut">Rachel Warren</dc:creator>
+        <dc:contributor opf:file-as="calibre" opf:role="bkp">calibre (2.55.0) [http://calibre-ebook.com]</dc:contributor>
+        <dc:date>2017-05-25T23:06:53.568733+00:00</dc:date>
+        <dc:description>Apache Spark is amazing when everything clicks. But if you haven’t seen the performance improvements you expected, or still don’t feel confident enough to use Spark in production, this practical book is for you. Authors Holden Karau and Rachel Warren demonstrate performance optimizations to help your Spark queries run faster and handle larger data sizes, while using fewer resources.Ideal for software engineers, data engineers, developers, and system administrators working with large-scale data applications, this book describes techniques that can reduce data infrastructure costs and developer hours. Not only will you gain a more comprehensive understanding of Spark, you’ll also learn how to make it sing.With this book, you’ll explore:How Spark SQL’s new interfaces improve performance over SQL’s RDD data structureThe choice between data joins in Core Spark and Spark SQLTechniques for getting the most out of standard RDD transformationsHow to work around performance issues in Spark’s key/value pair paradigmWriting high-performance Spark code without Scala or the JVMHow to test for functionality and performance when applying suggested improvementsUsing Spark MLlib and Spark ML machine learning librariesSpark’s Streaming components and external community packages</dc:description>
+        <dc:publisher>"O'Reilly Media, Inc."</dc:publisher>
+        <dc:identifier opf:scheme="GOOGLE">o0IlDwAAQBAJ</dc:identifier>
+        <dc:identifier opf:scheme="ISBN">9781491943151</dc:identifier>
+        <dc:language>eng</dc:language>
+        <dc:subject>Computers</dc:subject>
+        <dc:subject>Data Processing</dc:subject>
+        <dc:subject>Databases</dc:subject>
+        <dc:subject>Data Warehousing</dc:subject>
+        <dc:subject>Enterprise Applications</dc:subject>
+        <dc:subject>Business Intelligence Tools</dc:subject>
+        <dc:subject>Web</dc:subject>
+        <dc:subject>Web Programming</dc:subject>
+        <dc:subject>Internet</dc:subject>
+        <dc:subject>Application Development</dc:subject>
+        <dc:subject>Data Mining</dc:subject>
+        <dc:subject>Desktop Applications</dc:subject>
+        <dc:subject>General</dc:subject>
+        <dc:subject>Programming Languages</dc:subject>
+        <dc:subject>Java</dc:subject>
+        <dc:subject>Programming</dc:subject>
+        <dc:subject>Open Source</dc:subject>
+        <meta content="{&quot;Holden Karau&quot;: &quot;&quot;, &quot;Rachel Warren&quot;: &quot;&quot;}" name="calibre:author_link_map"/>
+        <meta content="2017-11-27T19:50:30+00:00" name="calibre:timestamp"/>
+        <meta content="High Performance Spark: Best Practices for Scaling and Optimizing Apache Spark" name="calibre:title_sort"/>
+        <meta content="{&quot;Rangés&quot;: [], &quot;Revues rangées&quot;: []}" name="calibre:user_categories"/>
+        <meta name="calibre:user_metadata:#lecteur" content="{&quot;is_category&quot;: true, &quot;#extra#&quot;: null, &quot;kind&quot;: &quot;field&quot;, &quot;is_custom&quot;: true, &quot;is_csp&quot;: false, &quot;colnum&quot;: 1, &quot;column&quot;: &quot;value&quot;, &quot;rec_index&quot;: 23, &quot;search_terms&quot;: [&quot;#lecteur&quot;], &quot;link_column&quot;: &quot;value&quot;, &quot;is_multiple2&quot;: {}, &quot;is_multiple&quot;: null, &quot;datatype&quot;: &quot;text&quot;, &quot;#value#&quot;: null, &quot;category_sort&quot;: &quot;value&quot;, &quot;table&quot;: &quot;custom_column_1&quot;, &quot;is_editable&quot;: true, &quot;label&quot;: &quot;lecteur&quot;, &quot;display&quot;: {&quot;use_decorations&quot;: 0}, &quot;name&quot;: &quot;Lecteur&quot;}"/>
+        <meta name="calibre:user_metadata:#formats" content="{&quot;is_category&quot;: false, &quot;#extra#&quot;: null, &quot;kind&quot;: &quot;field&quot;, &quot;is_custom&quot;: true, &quot;is_csp&quot;: false, &quot;colnum&quot;: 2, &quot;column&quot;: &quot;value&quot;, &quot;rec_index&quot;: 22, &quot;search_terms&quot;: [&quot;#formats&quot;], &quot;link_column&quot;: &quot;value&quot;, &quot;is_multiple2&quot;: {}, &quot;is_multiple&quot;: null, &quot;datatype&quot;: &quot;composite&quot;, &quot;#value#&quot;: &quot;EPUB&quot;, &quot;category_sort&quot;: &quot;value&quot;, &quot;table&quot;: &quot;custom_column_2&quot;, &quot;is_editable&quot;: true, &quot;label&quot;: &quot;formats&quot;, &quot;display&quot;: {&quot;contains_html&quot;: false, &quot;composite_template&quot;: &quot;{formats}&quot;, &quot;make_category&quot;: false, &quot;use_decorations&quot;: 0, &quot;composite_sort&quot;: &quot;text&quot;}, &quot;name&quot;: &quot;Formats&quot;}"/>
+    </metadata>
+    <guide>
+        <reference href="cover.jpg" title="Couverture" type="cover"/>
+    </guide>
+</package>
