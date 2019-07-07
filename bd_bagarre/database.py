@@ -1,3 +1,4 @@
+# coding: utf-8
 from sqlalchemy import create_engine
 import sqlalchemy.ext.declarative
 from sqlalchemy.orm import scoped_session, sessionmaker

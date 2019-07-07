@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+# coding: utf-8
 
 from bd_bagarre.database import db_session, init_db
 from flask import Flask

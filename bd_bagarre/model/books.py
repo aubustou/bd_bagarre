@@ -1,5 +1,6 @@
+# coding: utf-8
 import sqlalchemy.dialects.sqlite
-from sqlalchemy.orm import backref, relationship
+from sqlalchemy.orm import relationship
 
 import bd_bagarre.database
 
@@ -36,22 +37,6 @@ class Book(bd_bagarre.database.Base):
     series_group = sqlalchemy.Column(sqlalchemy.String)
     series_complete = sqlalchemy.Column(sqlalchemy.Boolean)
 
-    writer = sqlalchemy.Column(sqlalchemy.String,
-                               sqlalchemy.ForeignKey('authors.id'))  # array
-    penciller = sqlalchemy.Column(sqlalchemy.String,
-                                  sqlalchemy.ForeignKey('authors.id'))  # array
-    inker = sqlalchemy.Column(sqlalchemy.String,
-                              sqlalchemy.ForeignKey('authors.id'))  # array
-    colorist = sqlalchemy.Column(sqlalchemy.String,
-                                 sqlalchemy.ForeignKey('authors.id'))  # array
-    letterer = sqlalchemy.Column(sqlalchemy.String,
-                                 sqlalchemy.ForeignKey('authors.id'))  # array
-    cover_artist = sqlalchemy.Column(sqlalchemy.String,
-                                     sqlalchemy.ForeignKey(
-                                         'authors.id'))  # array
-    editor = sqlalchemy.Column(sqlalchemy.String,
-                               sqlalchemy.ForeignKey('authors.id'))  # array
-
     genre = sqlalchemy.Column(sqlalchemy.String)  # array
     tags = sqlalchemy.Column(sqlalchemy.dialects.sqlite.JSON)  # array
 
@@ -72,7 +57,48 @@ class Book(bd_bagarre.database.Base):
     # scan_information = sqlalchemy.Column(sqlalchemy.String)
     web_url = sqlalchemy.Column(sqlalchemy.String)
 
+    writers = relationship(
+        'Author',
+        secondary='author_book_links',
+        primaryjoin="""and_(Book.id == AuthorBookLink.book, 
+                            AuthorBookLink.role == 'writer')""",
+        secondaryjoin='AuthorBookLink.author == Author.id',
+    )
+    # penciller = sqlalchemy.Column(sqlalchemy.String,
+    #                                  sqlalchemy.ForeignKey('authors.id'))  # array
+    #    inker = sqlalchemy.Column(sqlalchemy.String,
+    #                             sqlalchemy.ForeignKey('authors.id'))  # array
+    #    colorist = sqlalchemy.Column(sqlalchemy.String,
+    #                               sqlalchemy.ForeignKey('authors.id'))  # array
+    #   letterer = sqlalchemy.Column(sqlalchemy.String,
+    #                                sqlalchemy.ForeignKey('authors.id'))  # array
+    #   cover_artist = sqlalchemy.Column(sqlalchemy.String,
+    #                                    sqlalchemy.ForeignKey(
+    #                                        'authors.id'))  # array
+    #   editor = sqlalchemy.Column(sqlalchemy.String,
+    #                              sqlalchemy.ForeignKey('authors.id'))  # array
+
+
+
+
     def __init__(self, *args, **kwargs):
+        number = kwargs.pop('number', None)
+        if number is not None and not isinstance(number, int):
+            self.number = int(number)
+
+        for people in ['writer', 'penciller']:
+            people = kwargs.pop(people, None)
+            if people:
+
+                bd_bagarre.model.authors.AuthorBookLink(
+                    id=uuid.uuid4(),
+                    book=self.id,
+                    author=
+                )
+        publisher = kwargs.pop('publisher', None)
+        if publisher:
+            self.publishers.append(Publisher(name=publisher))
+
         super().__init__(*args, **kwargs)
 
 
