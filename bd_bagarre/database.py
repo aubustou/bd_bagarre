@@ -26,8 +26,10 @@ def init_db():
 
     # Create the fixtures
     book = Book(
-        title='bagarre',
-        tags={'tags': ['1', '2']},
+        title='Astérix le gaulois',
+        series='Astérix',
+        number=1,
+        tags={'tags': ['France', '2']},
     )
     db_session.add(book)
     db_session.commit()

@@ -19,8 +19,8 @@ class Book(bd_bagarre.database.Base):
 
     title = sqlalchemy.Column(sqlalchemy.String)
     series = sqlalchemy.Column(sqlalchemy.String)
-    volume = sqlalchemy.Column(sqlalchemy.Integer)
-    number = sqlalchemy.Column(sqlalchemy.Integer)
+    volume = sqlalchemy.Column(sqlalchemy.String)
+    number = sqlalchemy.Column(sqlalchemy.String)
     publish_date = sqlalchemy.Column(sqlalchemy.DateTime)
 
     book_format = sqlalchemy.Column(sqlalchemy.String,
@@ -79,9 +79,6 @@ class Book(bd_bagarre.database.Base):
     #                              sqlalchemy.ForeignKey('authors.id'))  # array
 
     def __init__(self, *args, **kwargs):
-        number = kwargs.pop('number', None)
-        if number is not None and not isinstance(number, int):
-            self.number = int(number)
 
         super().__init__(*args, **kwargs)
 
