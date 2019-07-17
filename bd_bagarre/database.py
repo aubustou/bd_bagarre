@@ -20,18 +20,20 @@ def init_db():
     # they will be registered properly on the metadata.  Otherwise
     # you will have to import them first before calling init_db()
     from bd_bagarre.model.books import Book
-    from bd_bagarre.model.authors import Author
+    from bd_bagarre.model.authors import Author, AuthorBookLink
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
 
     # Create the fixtures
-    writer = Author(name='René Goscinny', sorting_name='Goscinny, René')
-    db_session.add(writer)
-    db_session.commit()
     book = Book(
         title='bagarre',
-        writer=writer.id,
         tags={'tags': ['1', '2']},
     )
     db_session.add(book)
+    db_session.commit()
+
+    writer = AuthorBookLink(role='writer')
+    writer.author = Author(name='René Goscinny', sorting_name='Goscinny, René')
+    book.authors.append(writer)
+    db_session.add(writer)
     db_session.commit()

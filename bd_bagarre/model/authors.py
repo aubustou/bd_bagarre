@@ -12,27 +12,29 @@ class Author(bd_bagarre.database.Base):
     name = sqlalchemy.Column(sqlalchemy.String)
     sorting_name = sqlalchemy.Column(sqlalchemy.String)
 
+    book = relationship('AuthorBookLink', back_populates='author')
+
 
 class AuthorBookLink(bd_bagarre.database.Base):
     __tablename__ = 'author_book_links'
 
     id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    book = sqlalchemy.Column(sqlalchemy.String,
+    book_id = sqlalchemy.Column(sqlalchemy.String,
                              sqlalchemy.ForeignKey('books.id'),
                              nullable=False)
-    author = sqlalchemy.Column(sqlalchemy.String,
+    author_id = sqlalchemy.Column(sqlalchemy.String,
                                sqlalchemy.ForeignKey('authors.id'),
                                nullable=False)
     role = sqlalchemy.Column(sqlalchemy.String, nullable=False)
 
+    book = relationship('Book', back_populates='authors')
+    author = relationship('Author', back_populates='book')
+
 
 class Writer(Author):
     books = relationship(
-        'Book',
-        secondary='author_book_links',
-        primaryjoin="""and_(AuthorBookLink.author == Author.id,
-                            AuthorBookLink.role == 'writer')""",
-        secondaryjoin='AuthorBookLink.book == Book.id')
+        'AuthorBookLink',
+)
 
 
 # class Penciller(Author):

@@ -13,7 +13,6 @@ class Book(bd_bagarre.database.Base):
     page_number = sqlalchemy.Column(sqlalchemy.Integer)
     rating = sqlalchemy.Column(sqlalchemy.Integer)
     community_rating = sqlalchemy.Column(sqlalchemy.Integer)
-    file_path = sqlalchemy.Column(sqlalchemy.String)  # array
     cover_path = sqlalchemy.Column(sqlalchemy.String)
     added_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                    default=sqlalchemy.func.now())
@@ -57,12 +56,13 @@ class Book(bd_bagarre.database.Base):
     # scan_information = sqlalchemy.Column(sqlalchemy.String)
     web_url = sqlalchemy.Column(sqlalchemy.String)
 
-    writers = relationship(
-        'Author',
-        secondary='author_book_links',
-        primaryjoin="""and_(Book.id == AuthorBookLink.book, 
-                            AuthorBookLink.role == 'writer')""",
-        secondaryjoin='AuthorBookLink.author == Author.id',
+    files = relationship(
+        'BookFile',
+        primaryjoin='Book.id == BookFile.book',
+    )
+    authors = relationship(
+        'AuthorBookLink',
+        back_populates='book'
     )
     # penciller = sqlalchemy.Column(sqlalchemy.String,
     #                                  sqlalchemy.ForeignKey('authors.id'))  # array
@@ -78,28 +78,22 @@ class Book(bd_bagarre.database.Base):
     #   editor = sqlalchemy.Column(sqlalchemy.String,
     #                              sqlalchemy.ForeignKey('authors.id'))  # array
 
-
-
-
     def __init__(self, *args, **kwargs):
         number = kwargs.pop('number', None)
         if number is not None and not isinstance(number, int):
             self.number = int(number)
 
-        for people in ['writer', 'penciller']:
-            people = kwargs.pop(people, None)
-            if people:
-
-                bd_bagarre.model.authors.AuthorBookLink(
-                    id=uuid.uuid4(),
-                    book=self.id,
-                    author=
-                )
-        publisher = kwargs.pop('publisher', None)
-        if publisher:
-            self.publishers.append(Publisher(name=publisher))
-
         super().__init__(*args, **kwargs)
+
+
+class BookFile(bd_bagarre.database.Base):
+    __tablename__ = 'book_file'
+
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+    name = sqlalchemy.Column(sqlalchemy.String)
+    path = sqlalchemy.Column(sqlalchemy.String)
+    book = sqlalchemy.Column(sqlalchemy.String,
+                             sqlalchemy.ForeignKey('books.id'))
 
 
 class BookFormat(bd_bagarre.database.Base):

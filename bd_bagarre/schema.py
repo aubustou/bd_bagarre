@@ -17,6 +17,16 @@ class Author(graphene_sqlalchemy.SQLAlchemyObjectType):
         interfaces = (graphene.relay.Node,)
 
 
+class AuthorBookConnection(graphene.relay.Connection):
+    class Meta:
+        node = Author
+
+
+class BookAuthorConnection(graphene.relay.Connection):
+    class Meta:
+        node = Book
+
+
 class Query(graphene.ObjectType):
     node = graphene.relay.Node.Field()
     book = graphene.relay.Node.Field(Book)
