@@ -29,3 +29,7 @@ def test_parse_file():
         assert book.number == number
         assert book.title == title
         assert book.file_path == filepath
+
+def test_csv():
+    with open('Mes livres.csv') as f:
+        pass

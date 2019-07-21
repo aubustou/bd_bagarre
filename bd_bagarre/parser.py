@@ -29,10 +29,10 @@ def parse_directory(directory: pathlib.Path, books=None):
         books = []
     path_directory = pathlib.Path(directory)
 
-    metadata_file_path = path_directory / 'metadata.opf'
-    if metadata_file_path.exists():
-        books.append(parse_calibre_metadata(metadata_file_path))
-        return books
+    #metadata_file_path = path_directory / 'metadata.opf'
+    #if metadata_file_path.exists():
+    #    books.append(parse_calibre_metadata(metadata_file_path))
+    #    return books
 
     for path in path_directory.iterdir():
         if path.is_dir():
@@ -48,17 +48,20 @@ def parse_file(file_path: pathlib.Path):
     title = file_path.stem
     infos = {'title': title}
 
+    import pdb; pdb.set_trace()
     for pattern in FILENAME_COMPILED_PATTERNS:
         match = pattern.match(title)
         if match:
-            infos = match.groupdict()
+            infos.update(match.groupdict())
             break
 
-    return bd_bagarre.model.books.Book(
-        file_path=str(file_path),
+    book = bd_bagarre.model.books.Book(
         format_type=file_path.suffix.strip('.'),
         **infos
     )
+    book.append(bd_bagarre.model.books.BookFile(file_path=str(file_path)))
+
+    return book
 
 
 def parse_calibre_metadata(file):

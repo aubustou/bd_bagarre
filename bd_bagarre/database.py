@@ -3,7 +3,9 @@ from sqlalchemy import create_engine
 import sqlalchemy.ext.declarative
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-engine = create_engine('sqlite:///database.sqlite3', convert_unicode=True)
+engine = create_engine('sqlite:///database.sqlite3',
+                       convert_unicode=True,
+                       echo=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
@@ -36,6 +38,10 @@ def init_db():
 
     writer = AuthorBookLink(role='writer')
     writer.author = Author(name='René Goscinny', sorting_name='Goscinny, René')
+    penciler = AuthorBookLink(role='penciler')
+    penciler.author = Author(name='Albert Uderzo', sorting_name='Uderzo, Albert')
+    book.authors.append(penciler)
     book.authors.append(writer)
+    db_session.add(penciler)
     db_session.add(writer)
     db_session.commit()
