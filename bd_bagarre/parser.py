@@ -1,11 +1,16 @@
 # coding utf-8
+
+import csv
 import pathlib
 import re
 
+import dateutil.parser
 import lxml.etree
 import lxml.objectify
 
 import bd_bagarre.model.books
+import bd_bagarre.model.authors
+
 
 BOOK_FILE_EXTENSIONS = {
     'cbz', 'cbr', 'zip', 'rar',
@@ -122,3 +127,47 @@ def parse_calibre_metadata(file):
         format_type=file_path.suffix.strip('.'),
         **infos
     )
+
+
+def parse_calibre_csv(db_session, file):
+    with open(file, encoding='utf-8-sig') as f:
+        content = csv.DictReader(f)
+
+        for line in content:
+            book = bd_bagarre.model.books.Book(
+                title=line['title'],
+                series=line['series'],
+                number=line['series_index'],
+                tags=line['tags'],
+                summary=line['comments'],
+                language=line['languages'],
+                cover_path=line['cover'],
+                rating=line['rating'],
+                publish_date=dateutil.parser.parse(line['pubdate']),
+            )
+            db_session.add(book)
+            db_session.commit()
+
+            for author in line['authors'].split('&'):
+                link = bd_bagarre.model.authors.AuthorBookLink()
+                obj = bd_bagarre.model.authors.Author.query.filter_by(
+                    name=author).first()
+                if not obj:
+                    obj = bd_bagarre.model.authors.Author(name=author.strip())
+                    db_session.add(obj)
+                link.author = obj
+                db_session.add(link)
+                book.authors.append(link)
+
+            publisher = line['publisher']
+            if publisher:
+                publisher_obj = bd_bagarre.model.books.Publisher.query.filter_by(
+                    name=publisher).first()
+                if not publisher_obj:
+                    publisher_obj = bd_bagarre.model.books.Publisher(
+                        name=publisher)
+                    db_session.add(publisher_obj)
+                    db_session.commit()
+                book._publisher = publisher_obj.id
+
+            db_session.commit()

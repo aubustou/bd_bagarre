@@ -25,7 +25,7 @@ class AuthorBookLink(bd_bagarre.database.Base):
     author_id = sqlalchemy.Column(sqlalchemy.String,
                                sqlalchemy.ForeignKey('authors.id'),
                                nullable=False)
-    role = sqlalchemy.Column(sqlalchemy.String, nullable=False)
+    role = sqlalchemy.Column(sqlalchemy.String)
 
     book = relationship('Book', back_populates='authors')
     author = relationship('Author', back_populates='book')

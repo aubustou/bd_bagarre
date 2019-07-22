@@ -25,7 +25,7 @@ class Book(bd_bagarre.database.Base):
 
     book_format = sqlalchemy.Column(sqlalchemy.String,
                                     sqlalchemy.ForeignKey('book_format.id'))
-    publisher = sqlalchemy.Column(sqlalchemy.String,
+    _publisher = sqlalchemy.Column(sqlalchemy.String,
                                   sqlalchemy.ForeignKey('publisher.id'))
     imprint = sqlalchemy.Column(sqlalchemy.String,
                                 sqlalchemy.ForeignKey('imprint.id'))
@@ -63,6 +63,10 @@ class Book(bd_bagarre.database.Base):
     authors = relationship(
         'AuthorBookLink',
         back_populates='book'
+    )
+    publisher = relationship(
+        'Publisher',
+        uselist=False
     )
     # penciller = sqlalchemy.Column(sqlalchemy.String,
     #                                  sqlalchemy.ForeignKey('authors.id'))  # array

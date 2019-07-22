@@ -1,7 +1,13 @@
 # coding: utf-8
+
+import pathlib
+
 from sqlalchemy import create_engine
 import sqlalchemy.ext.declarative
 from sqlalchemy.orm import scoped_session, sessionmaker
+
+
+
 
 engine = create_engine('sqlite:///database.sqlite3',
                        convert_unicode=True,
@@ -45,3 +51,7 @@ def init_db():
     db_session.add(penciler)
     db_session.add(writer)
     db_session.commit()
+
+    import bd_bagarre.parser
+    bd_bagarre.parser.parse_calibre_csv(db_session,
+                                        pathlib.Path('Mes livres.csv'))

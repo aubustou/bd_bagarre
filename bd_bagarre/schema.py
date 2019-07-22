@@ -12,12 +12,22 @@ class Book(graphene_sqlalchemy.SQLAlchemyObjectType):
 
     writers = graphene.List('bd_bagarre.schema.Author')
     pencilers = graphene.List('bd_bagarre.schema.Author')
+    authors = graphene.List('bd_bagarre.schema.Author')
+
+    def resolve_authors(parent, info):
+        return [a.author for a in parent.authors]
 
     def resolve_writers(parent, info):
         return [a.author for a in parent.authors if a.role == 'writer']
 
     def resolve_pencilers(parent, info):
         return [a.author for a in parent.authors if a.role == 'penciler']
+
+
+class Publisher(graphene_sqlalchemy.SQLAlchemyObjectType):
+    class Meta:
+        model = bd_bagarre.model.books.Publisher
+        interfaces = (graphene.relay.Node,)
 
 
 class AuthorBookLink(graphene_sqlalchemy.SQLAlchemyObjectType):
@@ -30,6 +40,11 @@ class Author(graphene_sqlalchemy.SQLAlchemyObjectType):
     class Meta:
         model = bd_bagarre.model.authors.Author
         interfaces = (graphene.relay.Node,)
+
+
+class PublisherConnection(graphene.relay.Connection):
+    class Meta:
+        node = Publisher
 
 
 class AuthorBookConnection(graphene.relay.Connection):

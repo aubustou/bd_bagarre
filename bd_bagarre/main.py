@@ -18,8 +18,7 @@ def main():
         "/graphql",
         view_func=GraphQLView.as_view("graphql",
                                       schema=bd_bagarre.schema.schema,
-                                      graphiql=True)
-    )
+                                      graphiql=True))
     try:
         app.run()
     finally:
