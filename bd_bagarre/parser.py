@@ -134,21 +134,25 @@ def parse_calibre_csv(db_session, file):
         content = csv.DictReader(f)
 
         for line in content:
+            cover = line['cover']
+            title = line['title']
+
             book = bd_bagarre.model.books.Book(
-                title=line['title'],
+                title=title,
                 series=line['series'],
                 number=line['series_index'],
                 tags=line['tags'],
                 summary=line['comments'],
                 language=line['languages'],
-                cover_path=line['cover'],
+                cover_path=cover,
                 rating=line['rating'],
                 publish_date=dateutil.parser.parse(line['pubdate']),
             )
             db_session.add(book)
             db_session.commit()
+            authors = line['authors'].split('&')
 
-            for author in line['authors'].split('&'):
+            for author in authors:
                 link = bd_bagarre.model.authors.AuthorBookLink()
                 obj = bd_bagarre.model.authors.Author.query.filter_by(
                     name=author).first()
@@ -169,5 +173,18 @@ def parse_calibre_csv(db_session, file):
                     db_session.add(publisher_obj)
                     db_session.commit()
                 book._publisher = publisher_obj.id
+
+            file_folder = pathlib.Path(cover).parent if cover else None
+            if file_folder:
+                for format in line['formats'].split(','):
+
+                    file_path = next(file_folder.glob('*.' + format.strip()))
+                    if file_path.exists():
+                        file_path_obj = bd_bagarre.model.books.BookFile(
+                            name=format,
+                            path=str(file_path),
+                        )
+                        db_session.add(file_path_obj)
+                        book.files.append(file_path_obj)
 
             db_session.commit()

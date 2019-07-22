@@ -24,6 +24,12 @@ class Book(graphene_sqlalchemy.SQLAlchemyObjectType):
         return [a.author for a in parent.authors if a.role == 'penciler']
 
 
+class BookFile(graphene_sqlalchemy.SQLAlchemyObjectType):
+    class Meta:
+        model = bd_bagarre.model.books.BookFile
+        interfaces = (graphene.relay.Node,)
+
+
 class Publisher(graphene_sqlalchemy.SQLAlchemyObjectType):
     class Meta:
         model = bd_bagarre.model.books.Publisher
@@ -40,6 +46,11 @@ class Author(graphene_sqlalchemy.SQLAlchemyObjectType):
     class Meta:
         model = bd_bagarre.model.authors.Author
         interfaces = (graphene.relay.Node,)
+
+
+class BookFileConnection(graphene.relay.Connection):
+    class Meta:
+        node = BookFile
 
 
 class PublisherConnection(graphene.relay.Connection):
