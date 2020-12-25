@@ -1,132 +1,128 @@
-# coding: utf-8
-import sqlalchemy.dialects.sqlite
+import pathlib
+from dataclasses import dataclass, field
+from typing import List
+from datetime import datetime
+from uuid import UUID, uuid4
+
+from sqlalchemy import Column, String, DateTime, Integer, Boolean, ForeignKey,  Table,  JSON
 from sqlalchemy.orm import relationship
 
-import bd_bagarre.database
+from bd_bagarre.database import Base
+from bd_bagarre.model import Resource
 
 
-class Book(bd_bagarre.database.Base):
-    __tablename__ = 'books'
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
+class BookFile(Base, Resource):
+    __tablename__ = "book_files"
 
-    format_type = sqlalchemy.Column(sqlalchemy.String)
-    page_number = sqlalchemy.Column(sqlalchemy.Integer)
-    rating = sqlalchemy.Column(sqlalchemy.Integer)
-    community_rating = sqlalchemy.Column(sqlalchemy.Integer)
-    cover_path = sqlalchemy.Column(sqlalchemy.String)
-    added_date = sqlalchemy.Column(sqlalchemy.DateTime,
-                                   default=sqlalchemy.func.now())
+    path = Column(String, nullable=False)
+    book = Column(String, ForeignKey("books.id"))
 
-    title = sqlalchemy.Column(sqlalchemy.String)
-    series = sqlalchemy.Column(sqlalchemy.String)
-    volume = sqlalchemy.Column(sqlalchemy.String)
-    number = sqlalchemy.Column(sqlalchemy.String)
-    publish_date = sqlalchemy.Column(sqlalchemy.DateTime)
+    @property
+    def name(self):
+        return pathlib.Path(self.path).name
 
-    book_format = sqlalchemy.Column(sqlalchemy.String,
-                                    sqlalchemy.ForeignKey('book_format.id'))
-    _publisher = sqlalchemy.Column(sqlalchemy.String,
-                                  sqlalchemy.ForeignKey('publisher.id'))
-    imprint = sqlalchemy.Column(sqlalchemy.String,
-                                sqlalchemy.ForeignKey('imprint.id'))
-
-    alternate_series = sqlalchemy.Column(sqlalchemy.String)  # array
-    alternate_series_number = sqlalchemy.Column(sqlalchemy.Integer)
-    story_arc = sqlalchemy.Column(sqlalchemy.String)
-    series_group = sqlalchemy.Column(sqlalchemy.String)
-    series_complete = sqlalchemy.Column(sqlalchemy.Boolean)
-
-    genre = sqlalchemy.Column(sqlalchemy.String)  # array
-    tags = sqlalchemy.Column(sqlalchemy.dialects.sqlite.JSON)  # array
-
-    age_rating = sqlalchemy.Column(sqlalchemy.String,
-                                   sqlalchemy.ForeignKey('age_rating.id'))
-    manga_reading_direction = sqlalchemy.Column(sqlalchemy.String)
-    language = sqlalchemy.Column(sqlalchemy.String)
-    black_and_white = sqlalchemy.Column(sqlalchemy.Boolean)
-    proposed_values = sqlalchemy.Column(sqlalchemy.Boolean)
-
-    summary = sqlalchemy.Column(sqlalchemy.String)
-    notes = sqlalchemy.Column(sqlalchemy.String)
-    review = sqlalchemy.Column(sqlalchemy.String)
-    # characters = sqlalchemy.Column(sqlalchemy.String)  # array  #foreignkey
-    # main_character_or_team = sqlalchemy.Column(sqlalchemy.String)  # foreignkey
-    # teams = sqlalchemy.Column(sqlalchemy.String)  # array  #foreignkey
-    # locations = sqlalchemy.Column(sqlalchemy.String)  # array  #foreignkey
-    # scan_information = sqlalchemy.Column(sqlalchemy.String)
-    web_url = sqlalchemy.Column(sqlalchemy.String)
-
-    files = relationship(
-        'BookFile',
-        primaryjoin='Book.id == BookFile.book',
-    )
-    authors = relationship(
-        'AuthorBookLink',
-        back_populates='book'
-    )
-    publisher = relationship(
-        'Publisher',
-        uselist=False
-    )
-    # penciller = sqlalchemy.Column(sqlalchemy.String,
-    #                                  sqlalchemy.ForeignKey('authors.id'))  # array
-    #    inker = sqlalchemy.Column(sqlalchemy.String,
-    #                             sqlalchemy.ForeignKey('authors.id'))  # array
-    #    colorist = sqlalchemy.Column(sqlalchemy.String,
-    #                               sqlalchemy.ForeignKey('authors.id'))  # array
-    #   letterer = sqlalchemy.Column(sqlalchemy.String,
-    #                                sqlalchemy.ForeignKey('authors.id'))  # array
-    #   cover_artist = sqlalchemy.Column(sqlalchemy.String,
-    #                                    sqlalchemy.ForeignKey(
-    #                                        'authors.id'))  # array
-    #   editor = sqlalchemy.Column(sqlalchemy.String,
-    #                              sqlalchemy.ForeignKey('authors.id'))  # array
-
-    def __init__(self, *args, **kwargs):
-
-        super().__init__(*args, **kwargs)
+    @property
+    def format(self):
+        return pathlib.Path(self.path).suffix
 
 
-class BookFile(bd_bagarre.database.Base):
-    __tablename__ = 'book_file'
+@dataclass()
+class BookFormat:
+    format: str
+    icon_path: str
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    name = sqlalchemy.Column(sqlalchemy.String)
-    path = sqlalchemy.Column(sqlalchemy.String)
-    book = sqlalchemy.Column(sqlalchemy.String,
-                             sqlalchemy.ForeignKey('books.id'))
-
-
-class BookFormat(bd_bagarre.database.Base):
-    __tablename__ = 'book_format'
-
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    format = sqlalchemy.Column(sqlalchemy.String)
-    icon_path = sqlalchemy.Column(sqlalchemy.String)
+    id: UUID = uuid4()
+    state = "created"
+    creation_date: datetime = datetime.now()
+    last_update_date: datetime = None
+    deletion_date: datetime = None
 
 
-class Publisher(bd_bagarre.database.Base):
-    __tablename__ = 'publisher'
+class Publisher(Base, Resource):
+    __tablename__ = "publishers"
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    name = sqlalchemy.Column(sqlalchemy.String)
-    icon_path = sqlalchemy.Column(sqlalchemy.String)
-
-
-class Imprint(bd_bagarre.database.Base):
-    __tablename__ = 'imprint'
-
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    name = sqlalchemy.Column(sqlalchemy.String)
-    icon_path = sqlalchemy.Column(sqlalchemy.String)
+    name = Column(String, nullable=False)
+    icon_path = Column(String)
 
 
-class AgeRating(bd_bagarre.database.Base):
-    __tablename__ = 'age_rating'
+@dataclass()
+class Imprint:
+    name: str
+    icon_path: str
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    name = sqlalchemy.Column(sqlalchemy.String)
-    icon_path = sqlalchemy.Column(sqlalchemy.String)
-    books = relationship(
-        'Book',
-        primaryjoin='Book.age_rating == AgeRating.id')
+    id: UUID = uuid4()
+    state = "created"
+    creation_date: datetime = datetime.now()
+    last_update_date: datetime = None
+    deletion_date: datetime = None
+
+
+@dataclass()
+class AgeRating:
+    name: str
+    icon_path: str
+
+    id: UUID = uuid4()
+    state = "created"
+    creation_date: datetime = datetime.now()
+    last_update_date: datetime = None
+    deletion_date: datetime = None
+
+
+author_books_association = Table("author_books_association", Base.metadata,
+                                 Column("book", String, ForeignKey("books.id")),
+                                 Column("author", String, ForeignKey("authors.id")),
+                                 )
+
+
+class Book(Base, Resource):
+    __tablename__ = "books"
+
+    title = Column(String, nullable=False)
+    series = Column(String)
+    volume = Column(String)
+    number = Column(String)
+    publish_date = Column(DateTime)
+
+    authors = relationship("Author", secondary=author_books_association, back_populates="books")
+    publisher = Column(String, ForeignKey("publishers.id"))
+    publisher_obj = relationship("Publisher", uselist=False)
+
+    format_type = Column(String)
+    page_number = Column(Integer)
+    rating = Column(Integer)
+    community_rating = Column(Integer)
+    cover_path = Column(String)
+
+    summary = Column(String)
+    notes = Column(String)
+    review = Column(String)
+    scan_information = Column(String)
+    web_url = Column(String)
+
+    book_format = Column(String)
+
+    imprint = Column(String)
+
+    alternate_series_number = Column(Integer)
+    story_arc = Column(String)
+    series_group = Column(String)
+
+    age_rating = Column(String)
+    manga_reading_direction = Column(String)
+    language = Column(String)
+    black_and_white = Column(Boolean)
+    proposed_values = Column(Boolean)
+
+    alternate_series: List[str] = field(default_factory=list)
+    series_complete = Column(Boolean)
+
+    genre: List[str] = field(default_factory=list)
+    tags = Column(JSON)
+
+    characters: List[str] = field(default_factory=list)
+    main_character_or_team: List[str] = field(default_factory=list)
+    teams: List[str] = field(default_factory=list)
+    locations: List[str] = field(default_factory=list)
+
+    files = relationship("BookFile")

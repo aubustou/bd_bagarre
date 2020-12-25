@@ -1,57 +1,84 @@
-# coding: utf-8
-
 import pathlib
+from dataclasses import make_dataclass, MISSING
+from inspect import getmembers
 
-from sqlalchemy import create_engine
-import sqlalchemy.ext.declarative
+from apischema import Undefined
+from apischema.conversions import dataclass_model
+from sqlalchemy import create_engine, Column
+from sqlalchemy.ext.declarative import as_declarative
 from sqlalchemy.orm import scoped_session, sessionmaker
-
-
-
+from sqlalchemy.types import TypeDecorator, CHAR
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
 engine = create_engine('sqlite:///database.sqlite3',
                        convert_unicode=True,
                        echo=True)
-db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
+session = scoped_session(sessionmaker(autocommit=False,
+                                      autoflush=False,
+                                      bind=engine))
 
 
-@sqlalchemy.ext.declarative.as_declarative()
-class Base(object):
-    query = db_session.query_property()
-
-
-# noinspection PyArgumentList
-def init_db():
-    # import all modules here that might define models so that
-    # they will be registered properly on the metadata.  Otherwise
-    # you will have to import them first before calling init_db()
-    from bd_bagarre.model.books import Book
-    from bd_bagarre.model.authors import Author, AuthorBookLink
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
-
-    # Create the fixtures
-    book = Book(
-        title='Astérix le gaulois',
-        series='Astérix',
-        number=1,
-        tags={'tags': ['France', '2']},
+def has_default(column: Column) -> bool:
+    return (
+            column.nullable
+            or column.default is not None
+            or column.server_default is not None
     )
-    db_session.add(book)
-    db_session.commit()
 
-    writer = AuthorBookLink(role='writer')
-    writer.author = Author(name='René Goscinny', sorting_name='Goscinny, René')
-    penciler = AuthorBookLink(role='penciler')
-    penciler.author = Author(name='Albert Uderzo', sorting_name='Uderzo, Albert')
-    book.authors.append(penciler)
-    book.authors.append(writer)
-    db_session.add(penciler)
-    db_session.add(writer)
-    db_session.commit()
 
-    import bd_bagarre.parser
-    bd_bagarre.parser.parse_calibre_csv(db_session,
-                                        pathlib.Path('Mes livres.csv'))
+class GUID(TypeDecorator):
+    """Platform-independent GUID type.
+
+    Uses PostgreSQL's UUID type, otherwise uses
+    CHAR(32), storing as stringified hex values.
+    """
+    impl = CHAR
+
+    @property
+    def python_type(self):
+        return str
+
+    def load_dialect_impl(self, dialect):
+        if dialect.name == 'postgresql':
+            return dialect.type_descriptor(UUID())
+        else:
+            return dialect.type_descriptor(CHAR(32))
+
+    def process_bind_param(self, value, dialect):
+        if value is None:
+            return value
+        elif dialect.name == 'postgresql':
+            return str(value)
+        else:
+            if not isinstance(value, uuid.UUID):
+                return "%.32x" % uuid.UUID(value).int
+            else:
+                # hexstring
+                return "%.32x" % value.int
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return value
+        else:
+            if not isinstance(value, uuid.UUID):
+                value = uuid.UUID(value)
+            return value
+
+
+@as_declarative()
+class Base:
+    def __init_subclass__(cls):
+        columns = getmembers(cls, lambda m: isinstance(m, Column))
+        if not columns:
+            return
+
+        fields = sorted((
+            (
+                column.name or field_name,
+                column.type.python_type,
+                Undefined if has_default(column) else MISSING,
+            )
+            for field_name, column in columns
+        ), key=lambda x: x[2] != MISSING)
+        dataclass_model(cls)(make_dataclass(cls.__name__, fields))

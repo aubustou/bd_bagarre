@@ -1,73 +1,56 @@
-# coding: utf-8
-import sqlalchemy
-from sqlalchemy.orm import backref, relationship
+from uuid import uuid4
 
-import bd_bagarre.database
+from sqlalchemy import Column, String, DateTime
+from sqlalchemy.orm import relationship
 
-
-class Author(bd_bagarre.database.Base):
-    __tablename__ = 'authors'
-
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    name = sqlalchemy.Column(sqlalchemy.String)
-    sorting_name = sqlalchemy.Column(sqlalchemy.String)
-
-    book = relationship('AuthorBookLink', back_populates='author')
+from bd_bagarre.database import Base
+from bd_bagarre.model import Resource
 
 
-class AuthorBookLink(bd_bagarre.database.Base):
-    __tablename__ = 'author_book_links'
+class Author(Base, Resource):
+    __tablename__ = "authors"
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    book_id = sqlalchemy.Column(sqlalchemy.String,
-                             sqlalchemy.ForeignKey('books.id'),
-                             nullable=False)
-    author_id = sqlalchemy.Column(sqlalchemy.String,
-                               sqlalchemy.ForeignKey('authors.id'),
-                               nullable=False)
-    role = sqlalchemy.Column(sqlalchemy.String)
+    name = Column(String, nullable=False)
+    sorting_name = Column(String)
+    birthdate = Column(DateTime)
+    birthplace = Column(String)
+    nationality = Column(String)
+    biography = Column(String)
 
-    book = relationship('Book', back_populates='authors')
-    author = relationship('Author', back_populates='book')
+    books = relationship("Book", secondary="author_books_association", back_populates="authors")
+
+    def __init__(self, name, sorting_name=None, *args, **kwargs):
+        if not sorting_name:
+            splitted_name = name.split()
+            self.sorting_name = splitted_name[1] + ", " + splitted_name[0] if len(splitted_name) > 1 else name
+        self.name = name
+        self.id = str(uuid4())
+        super().__init__(*args, **kwargs)
 
 
 class Writer(Author):
-    books = relationship(
-        'AuthorBookLink',
-)
+    pass
 
 
-# class Penciller(Author):
-#     books = relationship(
-#         'Book',
-#         primaryjoin='Book.penciller == Author.id')
-#
-#
-# class Inker(Author):
-#     books = relationship(
-#         'Book',
-#         primaryjoin='Book.inker == Author.id')
-#
-#
-# class Colorist(Author):
-#     books = relationship(
-#         'Book',
-#         primaryjoin='Book.colorist == Author.id')
-#
-#
-# class Letterer(Author):
-#     books = relationship(
-#         'Book',
-#         primaryjoin='Book.letterer == Author.id')
-#
-#
-# class CoverArtist(Author):
-#     books = relationship(
-#         'Book',
-#         primaryjoin='Book.cover_artist == Author.id')
-#
-#
-# class Editor(Author):
-#     books = relationship(
-#         'Book',
-#         primaryjoin='Book.editor == Author.id')
+class Penciller(Author):
+    pass
+
+
+class Inker(Author):
+    pass
+
+
+class Colorist(Author):
+    pass
+
+
+class Letterer(Author):
+    pass
+
+
+class CoverArtist(Author):
+    pass
+
+
+class Editor(Author):
+    pass
