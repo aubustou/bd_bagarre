@@ -1,7 +1,7 @@
 import enum
-from uuid import uuid4
+from uuid import uuid4, UUID
 
-from sqlalchemy import Column, String, Enum, DateTime, func
+from sqlalchemy import Column, Enum, DateTime, func, String
 
 from bd_bagarre.database import GUID
 
@@ -12,8 +12,12 @@ class ResourceState(enum.Enum):
     deleted = "deleted"
 
 
+def get_uuid() -> str:
+    return str(uuid4())
+
+
 class Resource:
-    id = Column(GUID(), primary_key=True, default=str(uuid4()))
+    id = Column(String, primary_key=True, default=get_uuid)
     state = Column(Enum(ResourceState), server_default="created")
     creation_date = Column(DateTime, server_default=func.current_timestamp())
     last_update_date = Column(DateTime)

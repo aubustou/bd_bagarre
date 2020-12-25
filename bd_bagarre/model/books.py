@@ -1,10 +1,15 @@
 import pathlib
-from dataclasses import dataclass, field
-from typing import List
-from datetime import datetime
-from uuid import UUID, uuid4
 
-from sqlalchemy import Column, String, DateTime, Integer, Boolean, ForeignKey,  Table,  JSON
+from sqlalchemy import (
+    Column,
+    String,
+    DateTime,
+    Integer,
+    Boolean,
+    ForeignKey,
+    Table,
+    JSON,
+)
 from sqlalchemy.orm import relationship
 
 from bd_bagarre.database import Base
@@ -26,16 +31,10 @@ class BookFile(Base, Resource):
         return pathlib.Path(self.path).suffix
 
 
-@dataclass()
-class BookFormat:
+class BookFormat(Base, Resource):
+    __tablename__ = "book_formats"
     format: str
     icon_path: str
-
-    id: UUID = uuid4()
-    state = "created"
-    creation_date: datetime = datetime.now()
-    last_update_date: datetime = None
-    deletion_date: datetime = None
 
 
 class Publisher(Base, Resource):
@@ -45,34 +44,24 @@ class Publisher(Base, Resource):
     icon_path = Column(String)
 
 
-@dataclass()
-class Imprint:
+class Imprint(Base, Resource):
+    __tablename__ = "imprints"
     name: str
     icon_path: str
 
-    id: UUID = uuid4()
-    state = "created"
-    creation_date: datetime = datetime.now()
-    last_update_date: datetime = None
-    deletion_date: datetime = None
 
-
-@dataclass()
-class AgeRating:
+class AgeRating(Base, Resource):
+    __tablename__ = "age_ratings"
     name: str
     icon_path: str
 
-    id: UUID = uuid4()
-    state = "created"
-    creation_date: datetime = datetime.now()
-    last_update_date: datetime = None
-    deletion_date: datetime = None
 
-
-author_books_association = Table("author_books_association", Base.metadata,
-                                 Column("book", String, ForeignKey("books.id")),
-                                 Column("author", String, ForeignKey("authors.id")),
-                                 )
+author_books_association = Table(
+    "author_books_association",
+    Base.metadata,
+    Column("book", String, ForeignKey("books.id")),
+    Column("author", String, ForeignKey("authors.id")),
+)
 
 
 class Book(Base, Resource):
@@ -84,7 +73,9 @@ class Book(Base, Resource):
     number = Column(String)
     publish_date = Column(DateTime)
 
-    authors = relationship("Author", secondary=author_books_association, back_populates="books")
+    authors = relationship(
+        "Author", secondary=author_books_association, back_populates="books"
+    )
     publisher = Column(String, ForeignKey("publishers.id"))
     publisher_obj = relationship("Publisher", uselist=False)
 
@@ -110,19 +101,21 @@ class Book(Base, Resource):
 
     age_rating = Column(String)
     manga_reading_direction = Column(String)
-    language = Column(String)
+    language = Column(JSON)
     black_and_white = Column(Boolean)
     proposed_values = Column(Boolean)
 
-    alternate_series: List[str] = field(default_factory=list)
+    alternate_series = Column(JSON)
     series_complete = Column(Boolean)
 
-    genre: List[str] = field(default_factory=list)
+    genre = Column(JSON)
     tags = Column(JSON)
 
-    characters: List[str] = field(default_factory=list)
-    main_character_or_team: List[str] = field(default_factory=list)
-    teams: List[str] = field(default_factory=list)
-    locations: List[str] = field(default_factory=list)
+    characters = Column(JSON)
+    main_character_or_team = Column(JSON)
+    teams = Column(JSON)
+    locations = Column(JSON)
+
+    identifiers = Column(JSON)
 
     files = relationship("BookFile")

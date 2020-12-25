@@ -19,8 +19,8 @@ calibre_opf_file_content = """<?xml version='1.0' encoding='utf-8'?>
         <dc:date>2017-05-25T23:06:53.568733+00:00</dc:date>
         <dc:description>{summary}</dc:description>
         <dc:publisher>{publisher}</dc:publisher>
-        <dc:identifier opf:scheme="GOOGLE">o0IlDwAAQBAJ</dc:identifier>
-        <dc:identifier opf:scheme="ISBN">9781491943151</dc:identifier>
+        <dc:identifier opf:scheme="GOOGLE">{identifier_1}</dc:identifier>
+        <dc:identifier opf:scheme="ISBN">{identifier_2}</dc:identifier>
         <dc:language>{language}</dc:language>
         <dc:subject>{tag_1}</dc:subject>
         <dc:subject>{tag_2}</dc:subject>
@@ -69,8 +69,10 @@ def calibre_files(tmp_path):
         tag_3="Databases",
         book_1=book_file_1,
         book_2=book_file_2,
+        identifier_1="o0IlDwAAQBAJ",
+        identifier_2="9781491943151",
     )
-    with open(file_path, 'w') as f:
+    with open(file_path, 'w', encoding="utf8") as f:
         f.write(calibre_opf_file_content.format(**content))
 
     return content
@@ -83,7 +85,7 @@ def test_parse_calibre_opf(tmp_path, calibre_files):
         "summary",
     ]:
         assert getattr(book, key) == calibre_files[key]
-    assert book.language == "english"
+    assert book.language == ["english"]
 
     assert set(book.tags) == {calibre_files["tag_1"], calibre_files["tag_2"], calibre_files["tag_3"]}
 
@@ -99,6 +101,8 @@ def test_parse_calibre_opf(tmp_path, calibre_files):
     assert book.files[0].path in {str(calibre_files["book_1"]), str(calibre_files["book_2"])}
     assert book.files[0].name in {x.name for x in [calibre_files["book_1"], calibre_files["book_2"]]}
     assert book.files[0].format in {x.suffix for x in [calibre_files["book_1"], calibre_files["book_2"]]}
+
+    assert {value for key, value in book.identifiers.items()} == {calibre_files["identifier_1"], calibre_files["identifier_2"]}
 
 
 @pytest.mark.skip
@@ -117,13 +121,3 @@ def test_parse_file():
         assert book.number == number
         assert book.title == title
         assert book.file_path == filepath
-
-
-@pytest.mark.skip
-def test_csv():
-    with open('Mes livres.csv', encoding='utf-8') as f:
-        content = csv.DictReader(f)
-        for row in content:
-            print(['{}: {}  '.format(key, value) for key, value in row.items()])
-            import pdb;
-            pdb.set_trace()
