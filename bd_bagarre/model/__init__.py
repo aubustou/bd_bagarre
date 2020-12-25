@@ -1,9 +1,7 @@
 import enum
-from uuid import uuid4, UUID
+from uuid import uuid4
 
 from sqlalchemy import Column, Enum, DateTime, func, String
-
-from bd_bagarre.database import GUID
 
 
 class ResourceState(enum.Enum):

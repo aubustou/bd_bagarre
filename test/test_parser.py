@@ -1,4 +1,3 @@
-import csv
 import pathlib
 
 import pytest
@@ -47,21 +46,23 @@ def calibre_files(tmp_path):
         title="High Performance Spark: Best Practices for Scaling and Optimizing Apache Spark",
         author_1="Holden Karau",
         author_2="Rachel Warren",
-        summary=("Apache Spark is amazing when everything clicks. But if you haven’t seen the performance "
-                 "improvements you expected, or still don’t feel confident enough to use Spark in production, "
-                 "this practical book is for you. Authors Holden Karau and Rachel Warren demonstrate performance"
-                 " optimizations to help your Spark queries run faster and handle larger data sizes, while "
-                 "using fewer resources.Ideal for software engineers, data engineers, developers, and system "
-                 "administrators working with large-scale data applications, this book describes techniques "
-                 "that can reduce data infrastructure costs and developer hours. Not only will you gain a more "
-                 "comprehensive understanding of Spark, you’ll also learn how to make it sing. With this book, "
-                 "you’ll explore:How Spark SQL’s new interfaces improve performance over SQL’s RDD data "
-                 "structure. The choice between data joins in Core Spark and Spark SQLTechniques for getting "
-                 "the most out of standard RDD transformationsHow to work around performance issues in Spark’s "
-                 "key/value pair paradigmWriting high-performance Spark code without Scala or the JVMHow to "
-                 "test for functionality and performance when applying suggested improvementsUsing Spark MLlib "
-                 "and Spark ML machine learning librariesSpark’s Streaming components and external community "
-                 "packages"),
+        summary=(
+            "Apache Spark is amazing when everything clicks. But if you haven’t seen the performance "
+            "improvements you expected, or still don’t feel confident enough to use Spark in production, "
+            "this practical book is for you. Authors Holden Karau and Rachel Warren demonstrate performance"
+            " optimizations to help your Spark queries run faster and handle larger data sizes, while "
+            "using fewer resources.Ideal for software engineers, data engineers, developers, and system "
+            "administrators working with large-scale data applications, this book describes techniques "
+            "that can reduce data infrastructure costs and developer hours. Not only will you gain a more "
+            "comprehensive understanding of Spark, you’ll also learn how to make it sing. With this book, "
+            "you’ll explore:How Spark SQL’s new interfaces improve performance over SQL’s RDD data "
+            "structure. The choice between data joins in Core Spark and Spark SQLTechniques for getting "
+            "the most out of standard RDD transformationsHow to work around performance issues in Spark’s "
+            "key/value pair paradigmWriting high-performance Spark code without Scala or the JVMHow to "
+            "test for functionality and performance when applying suggested improvementsUsing Spark MLlib "
+            "and Spark ML machine learning librariesSpark’s Streaming components and external community "
+            "packages"
+        ),
         publisher="O'Reilly Media, Inc.",
         language="eng",
         tag_1="Computer",
@@ -72,7 +73,7 @@ def calibre_files(tmp_path):
         identifier_1="o0IlDwAAQBAJ",
         identifier_2="9781491943151",
     )
-    with open(file_path, 'w', encoding="utf8") as f:
+    with open(file_path, "w", encoding="utf8") as f:
         f.write(calibre_opf_file_content.format(**content))
 
     return content
@@ -87,7 +88,11 @@ def test_parse_calibre_opf(tmp_path, calibre_files):
         assert getattr(book, key) == calibre_files[key]
     assert book.language == ["english"]
 
-    assert set(book.tags) == {calibre_files["tag_1"], calibre_files["tag_2"], calibre_files["tag_3"]}
+    assert set(book.tags) == {
+        calibre_files["tag_1"],
+        calibre_files["tag_2"],
+        calibre_files["tag_3"],
+    }
 
     assert all(isinstance(x, Author) for x in book.authors)
     assert book.authors[0].name == calibre_files["author_1"]
@@ -98,22 +103,32 @@ def test_parse_calibre_opf(tmp_path, calibre_files):
 
     assert len(book.files) == 2
     assert isinstance(book.files[0], BookFile)
-    assert book.files[0].path in {str(calibre_files["book_1"]), str(calibre_files["book_2"])}
-    assert book.files[0].name in {x.name for x in [calibre_files["book_1"], calibre_files["book_2"]]}
-    assert book.files[0].format in {x.suffix for x in [calibre_files["book_1"], calibre_files["book_2"]]}
+    assert book.files[0].path in {
+        str(calibre_files["book_1"]),
+        str(calibre_files["book_2"]),
+    }
+    assert book.files[0].name in {
+        x.name for x in [calibre_files["book_1"], calibre_files["book_2"]]
+    }
+    assert book.files[0].format in {
+        x.suffix for x in [calibre_files["book_1"], calibre_files["book_2"]]
+    }
 
-    assert {value for key, value in book.identifiers.items()} == {calibre_files["identifier_1"], calibre_files["identifier_2"]}
+    assert {value for key, value in book.identifiers.items()} == {
+        calibre_files["identifier_1"],
+        calibre_files["identifier_2"],
+    }
 
 
 @pytest.mark.skip
 def test_parse_file():
     for filepath, format, series, number, title in [
-        ('Cap Horn T03.cbz', 'cbz', 'Cap Horn', 3, None),
-        ('Black OP 6 - Desberg-Labiano.cbz', 'cbz', 'Black OP', 6, 'Desberg-Labiano'),
-        ('Cap Horn T03.cbz', 'cbz', 'Cap Horn', 3, None),
-        ('Cap Horn T03.cbz', 'cbz', 'Cap Horn', 3, None),
-        ('Cap Horn T03.cbz', 'cbz', 'Cap Horn', 3, None),
-        ('c:\Documents\Cap Horn T03.cbz', 'cbz', 'Cap Horn', 3, None),
+        ("Cap Horn T03.cbz", "cbz", "Cap Horn", 3, None),
+        ("Black OP 6 - Desberg-Labiano.cbz", "cbz", "Black OP", 6, "Desberg-Labiano"),
+        ("Cap Horn T03.cbz", "cbz", "Cap Horn", 3, None),
+        ("Cap Horn T03.cbz", "cbz", "Cap Horn", 3, None),
+        ("Cap Horn T03.cbz", "cbz", "Cap Horn", 3, None),
+        ("c:\Documents\Cap Horn T03.cbz", "cbz", "Cap Horn", 3, None),
     ]:
         book = bd_bagarre.parser.parse_file(pathlib.Path(filepath))
         assert book.format_type == format

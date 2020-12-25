@@ -5,7 +5,7 @@ from uuid import uuid4
 
 import xmltodict
 from apischema import deserialize
-from bd_bagarre.database import with_session, session
+from bd_bagarre.database import with_session
 from bd_bagarre.model.authors import Author
 from bd_bagarre.model.books import Book, Publisher, BookFile
 

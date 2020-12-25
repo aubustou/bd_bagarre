@@ -26,9 +26,7 @@ def with_session(func: Callable) -> Callable:
 def init_db() -> scoped_session:
     global session
 
-    engine = create_engine(
-        "sqlite:///database.sqlite3", convert_unicode=True, echo=True
-    )
+    engine = create_engine("sqlite:///database.sqlite3", echo=True)
     session = scoped_session(sessionmaker(autocommit=False, bind=engine))
     try:
         session.execute("""SELECT id FROM books LIMIT 1""")
