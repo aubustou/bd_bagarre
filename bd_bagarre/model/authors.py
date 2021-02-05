@@ -17,12 +17,18 @@ class Author(Base, Resource):
     nationality = Column(String)
     biography = Column(String)
 
-    books = relationship("Book", secondary="author_books_association", back_populates="authors")
+    books = relationship(
+        "Book", secondary="author_books_association", back_populates="authors"
+    )
 
     def __init__(self, name, sorting_name=None, *args, **kwargs):
         if not sorting_name:
             splitted_name = name.split()
-            self.sorting_name = splitted_name[1] + ", " + splitted_name[0] if len(splitted_name) > 1 else name
+            self.sorting_name = (
+                splitted_name[1] + ", " + splitted_name[0]
+                if len(splitted_name) > 1
+                else name
+            )
         self.name = name
         self.id = str(uuid4())
         super().__init__(*args, **kwargs)

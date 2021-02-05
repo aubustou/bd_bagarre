@@ -32,22 +32,6 @@ FILENAME_PATTERNS = [
 FILENAME_COMPILED_PATTERNS = [re.compile(p) for p in FILENAME_PATTERNS]
 
 
-def parse_file(file_path: pathlib.Path):
-    title = file_path.stem
-    infos = {"title": title}
-
-    for pattern in FILENAME_COMPILED_PATTERNS:
-        match = pattern.match(title)
-        if match:
-            infos.update(match.groupdict())
-            break
-
-    book = bd_bagarre.model.books.Book(format_type=file_path.suffix.strip("."), **infos)
-    book.append(bd_bagarre.model.books.BookFile(file_path=str(file_path)))
-
-    return book
-
-
 def parse_calibre_library() -> None:
     parser = argparse.ArgumentParser(
         prog="Calibre library for BD Bagarre",

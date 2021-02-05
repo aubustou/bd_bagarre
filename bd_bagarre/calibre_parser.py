@@ -1,6 +1,7 @@
 import logging
 from os import PathLike
-from typing import Dict, List, Optional
+from pathlib import Path
+from typing import Dict, List, Optional, Union
 from uuid import uuid4
 
 import xmltodict
@@ -19,7 +20,7 @@ LANGUAGE_MAPPER = {
 }
 
 
-def get_raw_metadata(book_path: PathLike) -> Optional[Dict]:
+def get_raw_metadata(book_path: Path) -> Optional[Dict]:
     metadata_file = book_path / "metadata.opf"
     if not metadata_file.exists():
         return
@@ -29,7 +30,7 @@ def get_raw_metadata(book_path: PathLike) -> Optional[Dict]:
     return content.get("package")
 
 
-def get_files(book_path: PathLike, book: Book) -> List[BookFile]:
+def get_files(book_path: Path, book: Book) -> List[BookFile]:
     files = []
     for file in book_path.iterdir():
         if file.name not in {"cover.jpg", "metadata.opf"}:
@@ -46,7 +47,9 @@ def get_language(metadata: Dict) -> List[str]:
 
 
 def get_identifiers(metadata: Dict) -> Dict[str, str]:
-    lines = metadata.get("dc:identifier", [])
+    lines: Union[List[Optional[Dict[str, str]]], Dict[str, str]] = metadata.get(
+        "dc:identifier", []
+    )
     lines = lines if isinstance(lines, list) else [lines]
     identifiers = dict()
     for line in lines:
@@ -58,7 +61,7 @@ def get_identifiers(metadata: Dict) -> Dict[str, str]:
 
 
 @with_session
-def get_metadata(book_path: PathLike) -> Optional[Book]:
+def get_metadata(book_path: Path) -> Optional[Book]:
     content = get_raw_metadata(book_path)
     if not content:
         return

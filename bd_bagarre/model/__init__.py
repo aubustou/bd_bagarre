@@ -16,7 +16,7 @@ def get_uuid() -> str:
 
 class Resource:
     id = Column(String, primary_key=True, default=get_uuid)
-    state = Column(Enum(ResourceState), server_default="created")
-    creation_date = Column(DateTime, server_default=func.current_timestamp())
+    state = Column(Enum(ResourceState), default="created")
+    creation_date = Column(DateTime, default=func.current_timestamp())
     last_update_date = Column(DateTime)
     deletion_date = Column(DateTime)
