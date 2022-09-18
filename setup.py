@@ -14,6 +14,8 @@ setup(
         "apischema",
         "lxml",
         "feedgenerator",
+        "ibmcloudant>=0.0.43",
+        "fastapi[all]",
     ],
     extras_require={
         "dev": [
