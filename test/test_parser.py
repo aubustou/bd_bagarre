@@ -1,12 +1,12 @@
-import pathlib
+from pathlib import Path
 from zipfile import ZipFile
 
 import pytest
 
-import bd_bagarre.calibre_parser
+# import bd_bagarre.calibre_parser
 from bd_bagarre.comicrack_parser import get_metadata
-from bd_bagarre.model.authors import Author
-from bd_bagarre.model.books import Publisher, BookFile
+# from bd_bagarre.model.authors import Author
+# from bd_bagarre.model.books import Publisher, BookFile
 
 calibre_opf_file_content = """<?xml version='1.0' encoding='utf-8'?>
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
@@ -147,7 +147,7 @@ def calibre_files(tmp_path):
 
 
 @pytest.fixture
-def comicrack_file(tmp_path):
+def comicrack_file(tmp_path: Path):
     zipped_file_path = tmp_path / "The Old Guard #01.cbz"
     content = {
         "series": "The Old Guard",
@@ -228,9 +228,9 @@ def test_parse_calibre_opf(tmp_path, calibre_files):
     }
 
 
-def test_parse_comicrack_xml(tmp_path, comicrack_file):
+def test_parse_comicrack_xml(comicrack_file):
     content, file_path = comicrack_file
-    gotten_content = get_metadata(file_path)
+    gotten_content, _ = get_metadata(file_path)
     assert gotten_content["file_path"] == file_path
     for attr in [
         "series",
@@ -262,9 +262,9 @@ def test_parse_file():
         ("Cap Horn T03.cbz", "cbz", "Cap Horn", 3, None),
         ("Cap Horn T03.cbz", "cbz", "Cap Horn", 3, None),
         ("Cap Horn T03.cbz", "cbz", "Cap Horn", 3, None),
-        ("c:\Documents\Cap Horn T03.cbz", "cbz", "Cap Horn", 3, None),
+        (r"c:\Documents\Cap Horn T03.cbz", "cbz", "Cap Horn", 3, None),
     ]:
-        book = bd_bagarre.parser.parse_file(pathlib.Path(filepath))
+        book = bd_bagarre.parser.parse_file(Path(filepath))
         assert book.format_type == format
         assert book.series == series
         assert book.number == number

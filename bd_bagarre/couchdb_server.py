@@ -1,29 +1,27 @@
-from typing import MutableMapping, Optional, Union, cast
-from concurrent.futures import ProcessPoolExecutor
 import logging
-import xmltodict
-from zipfile import ZipFile
-from uuid import uuid4
-from pathlib import Path
-from ibm_cloud_sdk_core.authenticators.authenticator import Authenticator
-from fastapi import BackgroundTasks
 import os
-from ibmcloudant.couchdb_session_authenticator import CouchDbSessionAuthenticator
+from concurrent.futures import ProcessPoolExecutor
+from pathlib import Path
+from typing import MutableMapping, Optional, Union, cast
+from uuid import uuid4
+from zipfile import ZipFile
 
-from ibmcloudant.cloudant_v1 import CloudantV1, Document
+import xmltodict
+from fastapi import BackgroundTasks, FastAPI
 from ibm_cloud_sdk_core.api_exception import ApiException
-from fastapi import FastAPI
+from ibm_cloud_sdk_core.authenticators.authenticator import Authenticator
+from ibmcloudant.cloudant_v1 import CloudantV1, Document
+from ibmcloudant.couchdb_session_authenticator import CouchDbSessionAuthenticator
 from pydantic import BaseModel
 
 USERPROFILE_DOC_TYPE = "userprofile"
 
 
-os.environ.update(
-    CLOUDANT_AUTH_TYPE="COUCHDB_SESSION",
-    CLOUDANT_URL="http://quirinalis.local:49161",
-    CLOUDANT_USERNAME="admin",
-    CLOUDANT_PASSWORD="toto",
-)
+# Environment variables
+# CLOUDANT_AUTH_TYPE="COUCHDB_SESSION"
+# CLOUDANT_URL=""
+# CLOUDANT_USERNAME=""
+# CLOUDANT_PASSWORD=""
 
 
 DB_NAME = "bouquins"

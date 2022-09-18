@@ -13,14 +13,17 @@ setup(
         "sqlalchemy",
         "apischema",
         "lxml",
+        "xmltodict",
         "feedgenerator",
         "ibmcloudant>=0.0.43",
         "fastapi[all]",
+        "pymongo",
+        "python-magic",
     ],
     extras_require={
         "dev": [
             "pytest",
-            "xmltodict",
+            "pdbpp",
         ],
     },
 )
