@@ -51,10 +51,9 @@ def get_client(recreate: bool = False) -> MongoClient:
         raise ValueError("MONGODB_URL is not set")
 
     if MONGODB_CLIENT is None or recreate:
-        logging.info("Creating new MongoClient")
-        MONGODB_CLIENT = MongoClient(
-            f"mongodb+srv://{MONGODB_USER}:{MONGODB_PASSWORD}@{MONGODB_URL}/?retryWrites=true&w=majority"
-        )
+        endpoint = f"mongodb+srv://{MONGODB_USER}:{MONGODB_PASSWORD}@{MONGODB_URL}/?retryWrites=true&w=majority"
+        logging.info("Creating new MongoClient at %s", endpoint)
+        MONGODB_CLIENT = MongoClient(endpoint)
 
     return MONGODB_CLIENT
 
