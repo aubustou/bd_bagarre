@@ -45,9 +45,9 @@ def get_client(recreate: bool = False) -> MongoClient:
     global MONGODB_CLIENT
 
     MONGODB_USER = os.getenv("MONGODB_USER", "bd_bagarre")
-    if (MONGODB_PASSWORD := os.getenv("MONGODB_PASSWORD")) is None:
+    if not (MONGODB_PASSWORD := os.getenv("MONGODB_PASSWORD")):
         raise ValueError("MONGODB_PASSWORD is not set")
-    if (MONGODB_URL := os.getenv("MONGODB_URL")) is None:
+    if not (MONGODB_URL := os.getenv("MONGODB_URL")):
         raise ValueError("MONGODB_URL is not set")
 
     if MONGODB_CLIENT is None or recreate:
