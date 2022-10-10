@@ -15,5 +15,6 @@ ENV MONGODB_URL=${MONGODB_URL}
 COPY . .
 RUN pip3 install .
 
+EXPOSE 80
 
 CMD ["uvicorn", "bd_bagarre.mongodb_server:main", "--host", "0.0.0.0", "--port", "80"]
