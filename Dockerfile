@@ -8,7 +8,9 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
+ENV PYTHONUNBUFFERED=1
 COPY . .
 RUN pip3 install .
+
 
 CMD ["bd-bagarre"]
