@@ -16,4 +16,4 @@ COPY . .
 RUN pip3 install .
 
 
-CMD ["bd-bagarre"]
+CMD ["uvicorn", "bd_bagarre.mongodb_server:main", "--host", "0.0.0.0", "--port", "8084"]
