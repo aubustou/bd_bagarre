@@ -9,6 +9,9 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 ENV PYTHONUNBUFFERED=1
+ENV MONGODB_PASSWORD=${MONGODB_PASSWORD}
+ENV MONGODB_URL=${MONGODB_URL}
+
 COPY . .
 RUN pip3 install .
 
