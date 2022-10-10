@@ -15,7 +15,6 @@ setup(
         "lxml",
         "xmltodict",
         "feedgenerator",
-        "ibmcloudant>=0.0.43",
         "fastapi[all]",
         "pymongo",
         "python-magic",
@@ -24,6 +23,11 @@ setup(
         "dev": [
             "pytest",
             "pdbpp",
+        ],
+    },
+    entry_points={
+        "console_scripts": [
+            "bd-bagarre=bd_bagarre.mongodb_server:main",
         ],
     },
 )

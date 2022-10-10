@@ -130,6 +130,10 @@ def _scan_for_books(folders: list[Path] = TO_SCAN_PATHS):
             recurse_scan(folder, executor)
 
             logging.info("Scan %s finished", folder)
+
+    logging.info("Creating indexes")
+    collection = get_collection()
+    collection.create_index("file_path", unique=True)
     RUNNING_SCAN = False
 
 
@@ -157,7 +161,7 @@ def create_document(path: Path, content: ComicInfo, recreate_client_connection: 
 
     logging.info("Creating document for %s", path)
     try:
-        collection.insert_one(content)
+        collection.update_one({"path": content["file_path"]}, content, upsert=True)
     except DuplicateKeyError:
         logging.warning("Document %s already exists", path)
 
@@ -174,6 +178,7 @@ def main():
     app.include_router(router)
 
     from .feed import router as feed_router
+
     app.include_router(feed_router)
 
     return app
@@ -212,7 +217,9 @@ async def scan_for_books(background_tasks: BackgroundTasks) -> str:
 @router.get("/add")
 async def add_book() -> str:
     collection = get_collection()
-    content, _ = get_metadata_from_comicrack("/quirinalis/Bagarre/Bouquins/Bédés/English/M/Modern Warfare 2 - Ghost (2010)/Modern Warfare 2 - Ghost #06 - Dead and Gone - (English).cbz")
+    content, _ = get_metadata_from_comicrack(
+        "/quirinalis/Bagarre/Bouquins/Bédés/English/M/Modern Warfare 2 - Ghost (2010)/Modern Warfare 2 - Ghost #06 - Dead and Gone - (English).cbz"
+    )
     collection.insert_one(content)
     logging.info("Added book")
     return "Added\n"
