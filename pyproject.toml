@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=82.0.1", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "bd_bagarre"
+version = "0.1.0"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+authors = [{ name = "Aubustou" }]
+dependencies = [
+    "sqlalchemy",
+    "apischema",
+    "lxml",
+    "xmltodict",
+    "feedgenerator",
+    "fastapi[all]",
+    "pymongo",
+    "python-magic",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pdbpp",
+    "ruff",
+    "pre-commit",
+]
+
+[project.scripts]
+bd-bagarre = "bd_bagarre.mongodb_server:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["bd_bagarre*"]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
